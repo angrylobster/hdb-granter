@@ -1,44 +1,59 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import FlatDetails from './FlatDetails';
-import ApplicantDetails from './ApplicantDetails';
+import ApplicantsDetails from './ApplicantsDetails';
 
-export default function Form(){
+export default function Form() {
     const [index, setIndex] = useState(1);
-    const [flatDetails, setFlatDetails] = useState({
-        flatType: '',
-        roomType: '',
-        region: '',
-        errors: [],
-    })
+    const [flatDetails, setFlatDetails] = useState({})
+    const [applicant, setApplicant] = useState({});
+    const [coapplicant, setCoapplicant] = useState({});
+    const [errors, setErrors] = useState([]);
 
-    const nextIndex = e => setIndex(index + 1);
-    const prevIndex = e => setIndex(index - 1);
-    const gotoIndex = v => setIndex(v);
+    const checkFlatDetails = () => {
+        const { roomType } = flatDetails;
+        const missingFields = ['flatType', 'roomType', 'region'].filter(field => !flatDetails[field]);
+        setErrors(missingFields);
+        if(missingFields.length === 0) {
+            (roomType === '5-Room' || roomType === '3Gen' || roomType === 'Executive Flat') ?
+                setIndex(-1) :
+                setIndex(index + 1)
+        }
+    }
 
-    switch(index) {
+    const checkApplicantsDetails = () => {
+        alert('applicants details checked')
+    }
+
+    switch (index) {
         case 1:
             return (
                 <FlatDetails
-                    nextIndex={nextIndex}
+                    checkFlatDetails={checkFlatDetails}
+                    errors={errors}
                     flatDetails={flatDetails}
                     setFlatDetails={setFlatDetails}
-                    gotoIndex={gotoIndex}
                 />
             )
-        case 2: 
+        case 2:
             return (
-                <ApplicantDetails
-                    prevIndex={prevIndex}
-                    nextIndex={nextIndex}
+                <ApplicantsDetails
+                    applicant={applicant}
+                    checkApplicantsDetails={checkApplicantsDetails}
+                    coapplicant={coapplicant}
+                    errors={errors}
+                    index={index}
+                    setApplicant={setApplicant}
+                    setCoapplicant={setCoapplicant}
+                    setIndex={setIndex}
                 />
             )
-        case 3: 
+        case 3:
             return <h3>Calculations</h3>;
         case 4:
             return <h3>Done</h3>;
         case -1:
             return <h3>Did not qualify</h3>
-        default: 
+        default:
             return null;
     }
 }
